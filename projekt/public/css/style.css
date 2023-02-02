@@ -1,0 +1,13 @@
+.post_box{
+    border-style:double;
+    width: 100%;
+}
+
+.submit_button {
+	background: #227596;
+	color: white;
+	border-style: outset;
+	border: none;
+	height: 30px;
+	width: 60px;
+}
