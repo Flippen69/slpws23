@@ -1,6 +1,48 @@
-.post_box{
-    border-style:double;
-    width: 100%;
+nav{
+	display: grid;
+	height: 50px;
+	grid-template-columns: 2fr, 1fr, 1fr, 1fr, 1fr, 1fr;
+	grid-template-rows: 100%;
+	grid-template-areas: 'span regi logi prof post supp';
+	text-align: center;
+	background:#227596 ;
+}
+
+span, .register, .login, .my_profile, .all_posts, .support{
+	font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+	text-decoration: none;
+	color: white;
+}
+
+span{
+    grid-area: span;
+	font-size: 20px;
+    /* background: lightgreen;  */
+}
+
+.register{
+    grid-area: regi;
+    /* background: purple; */
+}
+
+.login{
+    grid-area: logi;
+    /* background: lightpink; */
+}
+
+.my_profile{
+    grid-area: prof;
+    /* background: yellow; */
+}
+
+.all_posts{
+    grid-area: post;
+    /* background: red; */
+}
+
+.support{
+    grid-area: supp;
+    /* background: green; */
 }
 
 .submit_button {
@@ -10,4 +52,16 @@
 	border: none;
 	height: 30px;
 	width: 60px;
+	border-radius: 5px;
 }
+
+textarea {
+	width: 100%;
+	height: 150px;
+	/* padding: 12px 20px; */
+	box-sizing: border-box;
+	border: 2px solid #227596;
+	border-radius: 4px;
+	background-color: #f8f8f8;
+	resize: none;
+  }

@@ -36,14 +36,6 @@ post('/login') do
       "FEL LÖSEN!"
     end
 end
-
-get('/posts') do
-    id = session[:id].to_i
-    db = SQLite3::Database.new('db/db_forum.db')
-    db.results_as_hash = true
-    result = db.execute("SELECT * FROM posts WHERE user_id = ?", id)
-    slim(:"posts/index", locals:{posts:result})
-  end
   
   post('/post') do
     post = params[:post]
