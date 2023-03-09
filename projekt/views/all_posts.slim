@@ -1,0 +1,9 @@
+h1 All Posts
+ul
+    - @all_posts.each do |post|
+        p = "Name: #{post["name"]}"
+        textarea
+            = post["content"]
+        br/
+        br/
+        
