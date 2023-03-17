@@ -2,18 +2,22 @@ br
 br
 
 form action="post" method="POST"
-    textarea placeholder="Har du något kul och dela med dig? Skriv ditt inlägg här då :)" name="post" cols="30" rows="10"
+    textarea.before_title placeholder="Rubrik" type="text" name="post_title" cols="30" rows="10" 
+    textarea.before_content placeholder="Har du något kul och dela med dig? Skriv ditt inlägg här då :)" name="post" cols="30" rows="10"
     br
     input.submit_button type="submit" value="Lägg ut"/ 
 
 h1 Här nedan visas dina inlägg!
+- posts.each do |post|
+  .post
+    textarea.after_title = post["title"]
+    textarea.after_content = post["content"]
+    br
+    form method="POST" action="/post/#{post['id']}/delete"
+      input type="submit" value="Radera inlägg"
+    form method="POST" action="/post/#{post['id']}/update"
+      input type="text" name="edit_post" placeholder="Ändra content"
+      input type="submit" value="Ändra"
 
--posts.each do |post|
-    textarea = post["content"] 
-    form method="POST" action="post/#{post['id']}/delete"
-        input.submit_button type="submit" value='Delete'
-    form method="POST" action="post/#{post['id']}/update"
-        input type="text" name="edit_post" placeholder="Din ändring"/
-        input.submit_button type="submit" value="Edit"/
-        br
-        br
+      br/
+      br/

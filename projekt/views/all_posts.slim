@@ -1,9 +1,10 @@
 h1 All Posts
 ul
     - @all_posts.each do |post|
-        p = "Name: #{post["name"]}"
-        textarea
-            = post["content"]
-        br/
-        br/
-        
+            h2 = post["title"]
+            textarea.before_content = post["content"]
+            / p = "Created at: #{post["created_at"]}"
+            p = "Created at: #{DateTime.parse(post["created_at"]).strftime('%d %b %Y %H:%M')}"
+            p Publicerad av: #{post["name"]}
+            br/
+            br/
