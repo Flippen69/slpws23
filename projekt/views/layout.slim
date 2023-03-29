@@ -8,10 +8,12 @@ html lang="en"
   body
     nav
       span Välkommen till Sööders forum
-      a.register href="/" Registrera dig
-      a.login href="/showlogin" Logga in
-      a.my_profile href="/posts" Min profil
-      a.all_posts href="/all_posts" Alla inlägg
+      - if session[:id] == nil 
+        a.register href="/" Registrera dig
+        a.login href="/showlogin" Logga in
+      - else 
+        a.my_profile href="/posts" Lägg ut
+        a.all_posts href="/all_posts" Alla inlägg
+        a.logout href="/logout" Logga ut
       a.support href="/support" Support
-      a.logout href="/logout" Logga ut
     == yield

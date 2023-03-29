@@ -2,8 +2,8 @@ require 'sinatra'
 require 'slim'
 require 'sqlite3'
 require 'bcrypt'
-require_relative 'authenticationMiddleware.rb'
-require 'pony'
+require 'date'
+require 'active_support/time'
 enable :sessions
 
 # use AuthMiddleware
@@ -49,13 +49,16 @@ post('/login') do
     result = db.execute("SELECT * FROM users WHERE name= ?", username).first
     pwdigest = result["pwdigest"]
     id = result["id"]
-  
-    if BCrypt::Password.new(pwdigest) == password
-      
-      session[:id] = id
-      redirect('/posts')
-    else
-      "FEL LÖSEN!"
+    if result
+      pwdigest = result["pwdigest"]
+      id = result["id"]
+      if BCrypt::Password.new(pwdigest) == password
+        
+        session[:id] = id
+        redirect('/posts')
+      else
+        "Fel lösenord eller användaren finns inte!"
+      end
     end
 end
 
@@ -84,7 +87,6 @@ post('/post/:id/update') do
     redirect('/posts')
 end
 
-  
 post('/users/new') do
     username = params[:username]
     password = params[:password]
@@ -110,32 +112,25 @@ get('/all_posts') do
   slim(:all_posts)
 end
 
+post('/like/:id') do
+  # get the id of the post being liked from the url
+  id = params[:id].to_i
+  
+  # retrieve the current number of likes from the database
+  db = SQLite3::Database.new('db/db_forum.db')
+  likes = db.execute("SELECT likes FROM posts WHERE id = ?", id).first["likes"]
+  
+  # increment the number of likes by 1
+  new_likes = likes + 1
+  
+  # update the database with the new number of likes
+  db.execute("UPDATE posts SET likes = ? WHERE id = ?", new_likes, id)
+  
+  # redirect back to the all_posts page
+  redirect('/all_posts')
+end
+
 get('/support') do
 
   slim(:support)
-end
-
-post('/send_email') do
-    name = params[:name]
-    email = params[:email]
-    message = params[:message]
-  
-    Pony.mail({
-      :to => 'filiph.sooder@gmail.com', # replace with your email address
-      :from => email,
-      :subject => 'New support request from ' + name,
-      :body => message,
-      :via => :smtp,
-      :via_options => {
-        :address => 'smtp.gmail.com', # replace with your email provider's SMTP server
-        :port => '587',
-        :enable_starttls_auto => true,
-        :user_name => 'filiph.sooder@gmail.com', # replace with your email address
-        :password => 'Filiph1971', # replace with your email password
-        :authentication => :plain,
-        :domain => "localhost.localdomain"
-      }
-    })
-  
-    redirect '/support?message=success'
 end

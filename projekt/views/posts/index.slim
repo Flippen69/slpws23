@@ -1,8 +1,12 @@
 br
 br
 
+h1 Välkommen #{}, Kul att du hittade hit! 
+br 
+p Nedan kan du lägga ut ett inlägg som sedan andra kan ta del av!
+
 form action="post" method="POST"
-    textarea.before_title placeholder="Rubrik" type="text" name="post_title" cols="30" rows="10" 
+    textarea.before_title placeholder="Rubrik (max 20 tecken)" type="text" name="post_title" cols="30" rows="10" maxlength="20" 
     textarea.before_content placeholder="Har du något kul och dela med dig? Skriv ditt inlägg här då :)" name="post" cols="30" rows="10"
     br
     input.submit_button type="submit" value="Lägg ut"/ 
