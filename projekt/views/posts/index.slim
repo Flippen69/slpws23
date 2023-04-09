@@ -1,27 +1,37 @@
 br
 br
 
-h1 Välkommen #{}, Kul att du hittade hit! 
+h1 Välkommen, Kul att du hittade hit! 
 br 
 p Nedan kan du lägga ut ett inlägg som sedan andra kan ta del av!
 
 form action="post" method="POST"
     textarea.before_title placeholder="Rubrik (max 20 tecken)" type="text" name="post_title" cols="30" rows="10" maxlength="20" 
-    textarea.before_content placeholder="Har du något kul och dela med dig? Skriv ditt inlägg här då :)" name="post" cols="30" rows="10"
+    textarea.before_content placeholder="Har du något kul och dela med dig? Skriv ditt inlägg här då :)" name="post" cols="30" rows="10" maxlength="540" 
     br
     input.submit_button type="submit" value="Lägg ut"/ 
 
 h1 Här nedan visas dina inlägg!
+p Du kan enkelt redigera ditt inlägg genom att skriva i textrutan och sedan klicka på ändra!
+/ - posts.each do |post|
+/   .post
+/     textarea.after_title = post["title"]
+/     textarea.after_content = post["content"]
+/     br
+/     form method="POST" action="/post/#{post['id']}/delete"
+/       input type="submit" value="Radera inlägg"
+/     form method="POST" action="/post/#{post['id']}/update"
+/       input type="text" name="edit_post" placeholder="Ändra content"
+/       input type="submit" value="Ändra"
+
+/       br/
+/       br/
 - posts.each do |post|
   .post
     textarea.after_title = post["title"]
-    textarea.after_content = post["content"]
-    br
     form method="POST" action="/post/#{post['id']}/delete"
       input type="submit" value="Radera inlägg"
     form method="POST" action="/post/#{post['id']}/update"
-      input type="text" name="edit_post" placeholder="Ändra content"
+      textarea.after_content name="edit_post" placeholder="Redigera inlägg" = post["content"]
+      br/
       input type="submit" value="Ändra"
-
-      br/
-      br/

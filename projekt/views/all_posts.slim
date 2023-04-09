@@ -21,15 +21,18 @@ html
         -@all_posts.each do |post|
             li
                 h2 = post["title"]
+                
+                .before_content = post["content"]
                 div.post-content
-                    textarea.before_content = post["content"]
+                  
                 div.post-details
                   p = "Created at: #{DateTime.parse(post["created_at"]).to_time.in_time_zone("Stockholm").strftime('%d %b %Y %H:%M')}"
                   p Publicerad av: #{post["name"]}
-                  form action="/like/#{post['id']}" method="POST"
-                      input type="submit" value="Like (Ur funktion)"
-                  p Likes: 
-                  span.likes-count = post['likes']
+                  form action="/likes/#{post["id"]}" method="POST" id="like-form"
+                    input type="submit" value="Like" id="like_button"
+                  p Likes: #{post["likes_count"]}
+
+
 
 
 

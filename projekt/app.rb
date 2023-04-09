@@ -8,6 +8,12 @@ enable :sessions
 
 # use AuthMiddleware
 
+def auth_required!
+  if session[:id].nil?
+    redirect('/')
+  end
+end
+
 get('/') do
     slim(:register)
 end
@@ -20,15 +26,8 @@ get('/showlogin') do
     slim(:login)
 end
 
-# get('/posts') do
-#   id = session[:id].to_i
-#   db = SQLite3::Database.new('db/db_forum.db')
-#   db.results_as_hash = true
-#   result = db.execute("SELECT posts.id, posts.title, posts.content, users.name FROM posts INNER JOIN users ON posts.user_id = users.id WHERE user_id = ?", id)
-#   slim(:"posts/index", locals:{posts:result})
-# end
-
 get('/posts') do
+  auth_required!
   id = session[:id].to_i
   db = SQLite3::Database.new('db/db_forum.db')
   db.results_as_hash = true
@@ -42,11 +41,11 @@ get('/logout') do
 end
 
 post('/login') do
-    username = params[:username]
+    @username = params[:@username]
     password = params[:password]
     db = SQLite3::Database.new('db/db_forum.db')
     db.results_as_hash = true
-    result = db.execute("SELECT * FROM users WHERE name= ?", username).first
+    result = db.execute("SELECT * FROM users WHERE name= ?", @username).first
     pwdigest = result["pwdigest"]
     id = result["id"]
     if result
@@ -88,14 +87,14 @@ post('/post/:id/update') do
 end
 
 post('/users/new') do
-    username = params[:username]
+    @username = params[:@username]
     password = params[:password]
     password_confirm = params[:password_confirm]
   
     if (password == password_confirm)
       password_digest = BCrypt::Password.create(password)
       db = SQLite3::Database.new('db/db_forum.db')
-      db.execute("INSERT INTO users (name,pwdigest) VALUES (?,?)", username,password_digest)
+      db.execute("INSERT INTO users (name,pwdigest) VALUES (?,?)", @username,password_digest)
       redirect('/')
     else
       "lösen mathcade inte"
@@ -103,34 +102,36 @@ post('/users/new') do
 end
 
 get('/all_posts') do
+  auth_required!
   db = SQLite3::Database.new('db/db_forum.db')
   post_title = params[:post_title]
   db.results_as_hash = true
   # @all_posts = db.execute("SELECT posts.title, posts.content, users.name FROM posts INNER JOIN users ON posts.user_id = users.id")
-  @all_posts = db.execute("SELECT posts.title, posts.content, posts.created_at, users.name FROM posts INNER JOIN users ON posts.user_id = users.id")
+  # 
+  @all_posts = db.execute("SELECT posts.id, posts.title, posts.content, posts.created_at, users.name, COUNT(likes.id) AS likes_count FROM posts INNER JOIN users ON posts.user_id = users.id LEFT OUTER JOIN likes ON likes.post_id = posts.id GROUP BY posts.id")
 
   slim(:all_posts)
 end
 
-post('/like/:id') do
-  # get the id of the post being liked from the url
-  id = params[:id].to_i
-  
-  # retrieve the current number of likes from the database
+post('/likes/:id') do
+  post_id = params[:id].to_i
+  user_id = session[:id].to_i
+
   db = SQLite3::Database.new('db/db_forum.db')
-  likes = db.execute("SELECT likes FROM posts WHERE id = ?", id).first["likes"]
-  
-  # increment the number of likes by 1
-  new_likes = likes + 1
-  
-  # update the database with the new number of likes
-  db.execute("UPDATE posts SET likes = ? WHERE id = ?", new_likes, id)
-  
-  # redirect back to the all_posts page
+
+  @like_checker = db.execute("SELECT * FROM likes WHERE post_id = ? AND user_id = ?", post_id, user_id)
+
+  if @like_checker.empty?
+    db.execute("INSERT INTO likes (post_id, user_id) VALUES (?, ?)", post_id, user_id)
+    db.execute("UPDATE posts SET likes_count = likes_count + 1 WHERE id = ?", post_id)
+
+  else
+    halt 200, "Du hade redan gillat det där inlägget! Vänligen gå tillbaka"
+  end
+
   redirect('/all_posts')
 end
 
 get('/support') do
-
   slim(:support)
 end
