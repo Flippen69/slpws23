@@ -26,11 +26,11 @@ html
                 div.post-content
                   
                 div.post-details
-                  p = "Created at: #{DateTime.parse(post["created_at"]).to_time.in_time_zone("Stockholm").strftime('%d %b %Y %H:%M')}"
+                  p = "Publicerad: #{DateTime.parse(post["created_at"]).to_time.in_time_zone("Stockholm").strftime('%d %b %Y %H:%M')}"
                   p Publicerad av: #{post["name"]}
                   form action="/likes/#{post["id"]}" method="POST" id="like-form"
-                    input type="submit" value="Like" id="like_button"
-                  p Likes: #{post["likes_count"]}
+                    input type="submit" value="Gilla" id="like_button"
+                  p Antal gillningar: #{post["likes_count"]}
 
 
 

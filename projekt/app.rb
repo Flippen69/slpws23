@@ -41,11 +41,11 @@ get('/logout') do
 end
 
 post('/login') do
-    @username = params[:@username]
+    username = params[:username]
     password = params[:password]
     db = SQLite3::Database.new('db/db_forum.db')
     db.results_as_hash = true
-    result = db.execute("SELECT * FROM users WHERE name= ?", @username).first
+    result = db.execute("SELECT * FROM users WHERE name= ?", username).first
     pwdigest = result["pwdigest"]
     id = result["id"]
     if result
@@ -56,7 +56,7 @@ post('/login') do
         session[:id] = id
         redirect('/posts')
       else
-        "Fel lösenord eller användaren finns inte!"
+        "Fel lösenord"
       end
     end
 end
@@ -87,14 +87,14 @@ post('/post/:id/update') do
 end
 
 post('/users/new') do
-    @username = params[:@username]
+    username = params[:username]
     password = params[:password]
     password_confirm = params[:password_confirm]
   
     if (password == password_confirm)
       password_digest = BCrypt::Password.create(password)
       db = SQLite3::Database.new('db/db_forum.db')
-      db.execute("INSERT INTO users (name,pwdigest) VALUES (?,?)", @username,password_digest)
+      db.execute("INSERT INTO users (name,pwdigest) VALUES (?,?)", username,password_digest)
       redirect('/')
     else
       "lösen mathcade inte"
@@ -126,7 +126,7 @@ post('/likes/:id') do
     db.execute("UPDATE posts SET likes_count = likes_count + 1 WHERE id = ?", post_id)
 
   else
-    halt 200, "Du hade redan gillat det där inlägget! Vänligen gå tillbaka"
+    halt 200, "Där försökte du vara roligt, man kan ju inte gilla ett inlägg flera gånger!"
   end
 
   redirect('/all_posts')
